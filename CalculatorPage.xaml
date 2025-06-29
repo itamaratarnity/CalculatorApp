@@ -1,0 +1,175 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CalculatorApp.CalculatorPage">
+
+    <!-- 
+        Buttons style definition
+    -->
+    <ContentPage.Resources>
+        <!-- Number Button Style -->
+        <Style TargetType="Button" x:Key="NumberButtonStyle">
+            <Setter Property="FontFamily" Value="Roboto"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="HeightRequest" Value="56"/>
+            <Setter Property="WidthRequest" Value="56"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#36d1c4" Offset="0.0" />
+                        <GradientStop Color="#5b86e5" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <!-- Action Button Style -->
+        <Style TargetType="Button" x:Key="ActionButtonStyle">
+            <Setter Property="FontFamily" Value="AlfaSlabr"/>
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="FontAttributes" Value="Bold"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="TextColor" Value="White"/>
+            <Setter Property="HeightRequest" Value="56"/>
+            <Setter Property="WidthRequest" Value="56"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#f7971e" Offset="0.0" />
+                        <GradientStop Color="#ffd200" Offset="1.0" />
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <!-- 
+        Scroll view in case overlap 
+    -->
+    <ScrollView >
+        <VerticalStackLayout Margin="50"
+            HorizontalOptions="Center" 
+            VerticalOptions="Center">
+            <!-- 
+                Title of the page
+            
+                Main grid to host the page [3 rows, no columns]
+                0. Title of the page (10%)
+                1. Calculator Result panel (20%)
+                2. Grid of buttons (60%)
+                2. Error message (10%)
+            -->
+            <Grid >
+                <Grid.RowDefinitions >
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="15*"/>
+                    <RowDefinition Height="60*"/>
+                    <RowDefinition Height="15*"/>
+                    
+                </Grid.RowDefinitions>
+            </Grid>
+
+            <!-- 
+                Page title
+            -->
+            <Label
+                Grid.Row="0"
+                Text="My Calculator"
+                FontFamily="BungeeSpice"
+                FontSize="30"
+                Margin="20,16"
+                HorizontalTextAlignment="Center"
+                VerticalTextAlignment="Center"/>
+
+
+            <!-- 
+                Calculator Result 
+            -->
+            <Border
+                    Grid.Row="1"
+                    Stroke="DodgerBlue"
+                    StrokeThickness="2"
+                    Background="White"
+                    StrokeShape="RoundRectangle 16"
+                Margin="0, 10"
+                    >
+                <Label
+                        x:Name="ResultLabel"
+                        Text="0"
+                        FontFamily="Roboto"
+                        FontSize="50"
+                        TextColor="DodgerBlue"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        HorizontalTextAlignment="Center"
+                        VerticalTextAlignment="Center"
+                        Margin="20,16"
+/>
+            </Border>
+
+            <!-- 
+                Calculator Buttons [4x4 grid] all buttons use one event handler 
+                           {delegate Clicked event to GridButton_Clicked method in code behind}
+            -->
+            <Border Grid.Row="2">
+                <Grid 
+                    Margin="0, 20"
+                    RowDefinitions = "*,*,*,*"
+                    ColumnDefinitions  = "*,*,*,*"
+                    RowSpacing="10"
+                    ColumnSpacing="10"
+                    Padding="10"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                    <!-- 
+                        Calucalator Buttons: Row 0: 1,2, 3, +
+                    -->
+                    <Button Style="{StaticResource NumberButtonStyle}" Grid.Row="0" Grid.Column="0" Text="1"  Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource NumberButtonStyle}" Grid.Row="0" Grid.Column="1" Text="2" Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource NumberButtonStyle}" Grid.Row="0" Grid.Column="2" Text="3" Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="0" Grid.Column="3" Text="+" Clicked="GridButton_Clicked"/>
+                    <!-- 
+                        Calucalator Buttons: Row 1: 4,5,6, -
+                    -->
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="1" Grid.Column="0" Text="4"  Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="1" Grid.Column="1" Text="5" Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="1" Grid.Column="2" Text="6" Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource ActionButtonStyle}" Grid.Row="1" Grid.Column="3" Text="-" Clicked="GridButton_Clicked"/>
+                    <!-- 
+                        Calucalator Buttons: Row 2: 7,8,9, *
+                    -->
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="2" Grid.Column="0" Text="4"  Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="2" Grid.Column="1" Text="5" Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource NumberButtonStyle}" Grid.Row="2" Grid.Column="2" Text="6" Clicked="GridButton_Clicked"/>
+                    <Button  Style="{StaticResource ActionButtonStyle}" Grid.Row="2" Grid.Column="3" Text="*" Clicked="GridButton_Clicked"/>
+
+                    <!-- 
+                        Calucalator Buttons: Row 3:  none, 0, none,= {did not used rowspan}
+                    -->
+                    <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="3" Grid.Column="0" Text="C" Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource NumberButtonStyle}" Grid.Row="3" Grid.Column="1"  Text="0" Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="3" Grid.Column="3" Text="=" Clicked="GridButton_Clicked"/>
+                </Grid>
+            </Border>
+
+            <!-- 
+                Calculator User Message
+            -->
+            <Label
+                    Grid.Row="3"
+                     x:Name="MessageLabel"
+                     Text=""
+                     FontSize="40"
+                     FontFamily="AlfaSlabr"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center"
+                     Margin="20,16"
+                     HorizontalTextAlignment="Center"
+                     VerticalTextAlignment="Center"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
