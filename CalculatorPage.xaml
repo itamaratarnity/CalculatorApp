@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CalculatorApp.CalculatorPage">
-
     <!-- 
         Buttons style definition
     -->
@@ -46,7 +45,6 @@
             </Setter>
         </Style>
     </ContentPage.Resources>
-
     <!-- 
         Scroll view in case overlap 
     -->
@@ -69,10 +67,8 @@
                     <RowDefinition Height="15*"/>
                     <RowDefinition Height="60*"/>
                     <RowDefinition Height="15*"/>
-                    
                 </Grid.RowDefinitions>
             </Grid>
-
             <!-- 
                 Page title
             -->
@@ -84,8 +80,6 @@
                 Margin="20,16"
                 HorizontalTextAlignment="Center"
                 VerticalTextAlignment="Center"/>
-
-
             <!-- 
                 Calculator Result 
             -->
@@ -99,7 +93,7 @@
                     >
                 <Label
                         x:Name="ResultLabel"
-                        Text="0"
+                        Text=""
                         FontFamily="Roboto"
                         FontSize="50"
                         TextColor="DodgerBlue"
@@ -110,7 +104,6 @@
                         Margin="20,16"
 />
             </Border>
-
             <!-- 
                 Calculator Buttons [4x4 grid] all buttons use one event handler 
                            {delegate Clicked event to GridButton_Clicked method in code behind}
@@ -152,10 +145,10 @@
                     -->
                     <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="3" Grid.Column="0" Text="C" Clicked="GridButton_Clicked"/>
                     <Button Style="{StaticResource NumberButtonStyle}" Grid.Row="3" Grid.Column="1"  Text="0" Clicked="GridButton_Clicked"/>
+                    <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="3" Grid.Column="2"  Text="/" Clicked="GridButton_Clicked"/>
                     <Button Style="{StaticResource ActionButtonStyle}" Grid.Row="3" Grid.Column="3" Text="=" Clicked="GridButton_Clicked"/>
                 </Grid>
             </Border>
-
             <!-- 
                 Calculator User Message
             -->
@@ -163,8 +156,9 @@
                     Grid.Row="3"
                      x:Name="MessageLabel"
                      Text=""
+                     TextColor="Red"
                      FontSize="40"
-                     FontFamily="AlfaSlabr"
+                     FontFamily="Roboto"
                      HorizontalOptions="Center"
                      VerticalOptions="Center"
                      Margin="20,16"

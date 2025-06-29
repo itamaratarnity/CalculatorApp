@@ -11,11 +11,11 @@ public enum CalculatorAction
 
 public class CalculatorResponse
 {
-    public int Result { get; } = 0;
-    public bool Success { get; } = true;
-    public string Error { get; } = string.Empty;
+    public string Result { get; }
+    public bool Success { get; } 
+    public string Error { get; } 
 
-    public CalculatorResponse(int Result, bool Success = true, string Error = "")
+    public CalculatorResponse(string Result, bool Success = true, string Error = "")
     {
         this.Result = Result;
         this.Success = Success;
@@ -30,10 +30,26 @@ public class Calculator
     private int _argument2 = 0;
     private bool _completed = false;
 
-    public void SetArgumentOne(int value) => _argument1 = value;
-    public void SetArgumentTwo(int value) => _argument2 = value;
+    public void SetArgument1(string value)
+    {
+        int.TryParse(value, out _argument1);
+    }
+    public void SetArgument2(string value)
+    {
+        int.TryParse(value, out _argument2);
+    }
     public void SetAction(CalculatorAction action) => _action = action;
-
+    public CalculatorResponse IsValid()
+    {
+        if (_action == CalculatorAction.None)
+            return new CalculatorResponse(string.Empty, false, "No action set.");
+        if (_argument1 == -1)
+            return new CalculatorResponse(string.Empty, false, "First argument is not set.");
+        if (_argument2 == -1 && _action != CalculatorAction.Add && _action != CalculatorAction.Subtract)
+            return new CalculatorResponse(string.Empty, false, "Second argument is not set.");
+        _completed = true;
+        return new CalculatorResponse(string.Empty,true,string.Empty);
+    }
 
     public bool IsCompleted() => _completed;
 
@@ -41,28 +57,38 @@ public class Calculator
     {
         _completed = false;
         _action = CalculatorAction.None;
-        _argument1 = 0;
-        _argument2 = 0;
+        _argument1 = -1;
+        _argument2 = -1;
     }
 
     public CalculatorResponse Perform()
     {
-        if (_action == CalculatorAction.None)
-            return new CalculatorResponse(-1, false, "No action set.");
-        else if (_argument1 == 0)
-            return new CalculatorResponse(-1, false, "First argument is not set.");
-        else if (_argument2 == 0)
-            return new CalculatorResponse(-1, false, "Second argument is not set.");
-
-        int result = _action switch
+        try
         {
-            CalculatorAction.Add => _argument1 + _argument2,
-            CalculatorAction.Subtract => _argument1 - _argument2,
-            CalculatorAction.Multiply => _argument1 * _argument2,
-            CalculatorAction.Divide => _argument2 != 0 ? _argument1 / _argument2 : 0,
-            _ => _argument1
-        };
+            CalculatorResponse response = IsValid();
+            if (!response.Success)
+                return response;
 
-        return new CalculatorResponse(result, true, string.Empty);
+     
+            int temp = _action switch
+            {
+                CalculatorAction.Add => _argument1 + _argument2,
+                CalculatorAction.Subtract => _argument1 - _argument2,
+                CalculatorAction.Multiply => _argument1 * _argument2,
+                CalculatorAction.Divide =>  _argument1 / _argument2,
+                _ => _argument1
+            };
+            response = new CalculatorResponse(temp.ToString(), true, string.Empty);
+            return response;
+
+        }
+        catch (DivideByZeroException)
+        {
+            return new CalculatorResponse(string.Empty, false, "Division by zero is not allowed");
+        }
+        catch(Exception)
+        {
+            return new CalculatorResponse(string.Empty, false, "Unkwown error please check logs...");
+        }
     }
 }

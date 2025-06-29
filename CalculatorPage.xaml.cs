@@ -1,38 +1,38 @@
-﻿namespace CalculatorApp
+﻿
+namespace CalculatorApp
 {
     public partial class CalculatorPage : ContentPage
     {
         #region Memebers
         private Calculator _calculator = new Calculator();
-        private string _inputBuffer = "";
-        private bool _isSecondArgument = false;
         #endregion
 
         public CalculatorPage()
         {
-            InitializeComponent();
-       }
+            try
+            {
+                InitializeComponent();
+            }
+            catch (Exception ex)
+            {
+                DisplayAlert("Error", ex.Message, "OK");
+            }
+        }
 
         private void GridButton_Clicked(object sender, EventArgs e)
         {
-            if (sender is Button btn)
+            try
             {
-                string value = btn.Text;
+                if (sender is Button btn)
+                {
 
-                if (int.TryParse(value, out int number)) // Number button
-                {
-                    _inputBuffer += value;
-                    ResultLabel.Text = _inputBuffer;
-                    MessageLabel.Text = ""; // Clear message on number input
-                }
-                else if (value == "+" || value == "-" || value == "*" || value == "/")
-                {
-                    if (int.TryParse(_inputBuffer, out int arg1))
+                    string value = btn.Text;
+
+                    if (int.TryParse(value, out int number)) // Number button
+                        ResultLabel.Text += value;
+                    else if (value == "+" || value == "-" || value == "*" || value == "/")
                     {
-                        _calculator.SetArgumentOne(arg1);
-                        _inputBuffer = "";
-                        _isSecondArgument = true;
-
+                        _calculator.SetArgument1(ResultLabel.Text);
                         CalculatorAction action = value switch
                         {
                             "+" => CalculatorAction.Add,
@@ -42,40 +42,42 @@
                             _ => CalculatorAction.None
                         };
                         _calculator.SetAction(action);
-                        MessageLabel.Text = ""; // Clear message on action set
+                        ResultLabel.Text = "";
+
                     }
-                }
-                else if (value == "=")
-                {
-                    if (_isSecondArgument && int.TryParse(_inputBuffer, out int arg2))
+                    else if (value == "C") // Optional: Clear button
                     {
-                        _calculator.SetArgumentTwo(arg2);
-                        var response = _calculator.Perform();
-                        if (response.Success)
+                        _calculator.Reset();
+                        ResultLabel.Text = "";
+                        MessageLabel.Text = "";
+                    }
+                    else if (value == "=")
+                    {
+                        // set second agrument
+                        _calculator.SetArgument2(ResultLabel.Text);
+                        var response = _calculator.IsValid();
+                        if (!response.Success)
                         {
-                            ResultLabel.Text = response.Result.ToString();
-                            MessageLabel.Text = ""; // Clear message on success
-                            _calculator.SetArgumentOne(response.Result); // For chaining
-                            _inputBuffer = "";
-                            _isSecondArgument = false;
+                            MessageLabel.Text = response.Error;
+                            return;
                         }
-                        else
+                        response = _calculator.Perform();
+                        if (!response.Success)
                         {
-                            ResultLabel.Text = "0";
-                            MessageLabel.Text = response.Error; // Show error
-                            _inputBuffer = "";
-                            _isSecondArgument = false;
+                            MessageLabel.Text = response.Error;
+                            return;
                         }
+
+                        ResultLabel.Text = response.Result.ToString();
+                        MessageLabel.Text = string.Empty;
+                        _calculator.SetAction(CalculatorAction.None);
                     }
                 }
-                else if (value == "C") // Optional: Clear button
-                {
-                    _calculator.Reset();
-                    _inputBuffer = "";
-                    _isSecondArgument = false;
-                    ResultLabel.Text = "0";
-                    MessageLabel.Text = "";
-                }
+
+            }
+            catch (Exception ex)
+            {
+                
             }
         }
     }
