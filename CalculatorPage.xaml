@@ -72,26 +72,43 @@
             <!-- 
               Calculator History
             -->
-            <Border
-                Grid.Row="0"
-                Stroke="LightGray"
-                StrokeThickness="1"
-                Background="#eee"
-                StrokeShape="RoundRectangle 16"
-                Margin="0,10">
-                <Label
-                        x:Name="HistoryLabel"
-                        Text=""
-                        FontFamily="Roboto"
-                        TextColor="Gray"
-                        HorizontalOptions="Fill"
-                        HorizontalTextAlignment="Start"
-                        VerticalTextAlignment="Center"
-                         LineBreakMode="WordWrap"
-                        MaxLines="3"
-                        FontSize="16"
-                        Padding="20, 10" />
-            </Border>
+            <Grid Grid.Row="0" Margin="0,10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border
+                    Stroke="LightGray"
+                    StrokeThickness="1"
+                    Background="#eee"
+                    StrokeShape="RoundRectangle 16"
+                    Padding="10"
+                    VerticalOptions="Center">
+                    <Label
+                            Grid.Row="0"
+                            x:Name="HistoryLabel"
+                            Text=""
+                            FontFamily="Roboto"
+                            TextColor="Gray"
+                            HorizontalOptions="Fill"
+                            HorizontalTextAlignment="Start"
+                            VerticalTextAlignment="Center"
+                            LineBreakMode="WordWrap"
+                            MaxLines="3"
+                            FontSize="16"
+                            Padding="10,0"/>
+                </Border>
+
+                <Button
+                    Grid.Row="1"
+                        Text="נקה היסטוריה"
+                        FontSize="14"
+                        Padding="10,5"
+                        Margin="0,5,0,0"
+                        HorizontalOptions="Center"
+                        Clicked="ClearHistoryButton_Clicked"/>
+
+            </Grid>
 
 
             <!-- 

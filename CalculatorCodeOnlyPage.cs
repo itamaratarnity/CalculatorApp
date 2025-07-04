@@ -8,12 +8,71 @@ public class CalculatorCodeOnlyPage : ContentPage
 {
     private Label ResultLabel;
     private Label MessageLabel;
-    private Calculator _calculator = new Calculator();
+    private Label HistoryLabel;
+
+    private Button ClearHistoryButton;
+
+    private CalculatorController _controller;
+
 
     public CalculatorCodeOnlyPage()
     {
+        _controller = new CalculatorController();
+
         Title = "Calculator (Code Only)";
         BackgroundColor = Colors.White;
+
+
+        // History Label בתוך Border
+        HistoryLabel = new Label
+        {
+            Text = "",
+            FontFamily = "Roboto",
+            TextColor = Colors.Gray,
+            HorizontalOptions = LayoutOptions.Fill,
+            HorizontalTextAlignment = TextAlignment.Start,
+            VerticalTextAlignment = TextAlignment.Center,
+            LineBreakMode = LineBreakMode.WordWrap,
+            MaxLines = 3,
+            FontSize = 16,
+            Padding = new Thickness(10, 0)
+        };
+
+        var historyBorder = new Border
+        {
+            Stroke = Colors.LightGray,
+            StrokeThickness = 1,
+            BackgroundColor = Color.FromArgb("#EEE"),
+            StrokeShape = new RoundRectangle { CornerRadius = 16 },
+            Padding = 10,
+            Content = HistoryLabel,
+            VerticalOptions = LayoutOptions.Center
+        };
+
+        // כפתור ניקוי היסטוריה, ממורכז עם מרווח עליון קטן
+        ClearHistoryButton = new Button
+        {
+            Text = "נקה היסטוריה",
+            FontSize = 14,
+            Padding = new Thickness(10, 5),
+            Margin = new Thickness(0, 5, 0, 0),
+            HorizontalOptions = LayoutOptions.Center
+        };
+        ClearHistoryButton.Clicked +=  (s,e) => { _controller.ClearHistory(HistoryLabel); } ;
+
+        // היסטוריה עם כפתור בתוך Grid של 2 שורות
+        var historyGrid = new Grid
+        {
+            Margin = new Thickness(0, 10, 0, 0),
+            RowDefinitions =
+            {
+                new RowDefinition(GridLength.Auto),
+                new RowDefinition(GridLength.Auto)
+            }
+        };
+        historyGrid.Add(historyBorder, 0, 0);
+        historyGrid.Add(ClearHistoryButton, 0, 1);
+
 
         ResultLabel = new Label
         {
@@ -55,6 +114,7 @@ public class CalculatorCodeOnlyPage : ContentPage
             Spacing = 20,
             Children =
            {
+               historyGrid,
                resultBorder,
                buttonGrid,
                MessageLabel
@@ -100,7 +160,13 @@ public class CalculatorCodeOnlyPage : ContentPage
                     HeightRequest = 56
                 };
 
-                button.Clicked += GridButton_Clicked;
+                button.Clicked += (s, e) =>
+                {
+                    if (s is Button btn)
+                    {
+                        _controller.OnButtonClicked(btn.Text, ResultLabel, MessageLabel, HistoryLabel);
+                    }
+                };
 
                 grid.Add(button, col, row);
             }
@@ -108,68 +174,7 @@ public class CalculatorCodeOnlyPage : ContentPage
 
         return grid;
     }
-
-    private void GridButton_Clicked(object sender, EventArgs e)
-    {
-        try
-        {
-            if (sender is Button btn)
-            {
-                string value = btn.Text;
-
-                if (int.TryParse(value, out int number))
-                {
-                    ResultLabel.Text += value;
-                }
-                else if (value == "+" || value == "-" || value == "*" || value == "/")
-                {
-                    _calculator.SetArgument1(ResultLabel.Text);
-                    CalculatorAction action = value switch
-                    {
-                        "+" => CalculatorAction.Add,
-                        "-" => CalculatorAction.Subtract,
-                        "*" => CalculatorAction.Multiply,
-                        "/" => CalculatorAction.Divide,
-                        _ => CalculatorAction.None
-                    };
-                    _calculator.SetAction(action);
-                    ResultLabel.Text = "";
-                }
-                else if (value == "C")
-                {
-                    _calculator.Reset();
-                    ResultLabel.Text = "";
-                    MessageLabel.Text = "";
-                }
-                else if (value == "=")
-                {
-                    _calculator.SetArgument2(ResultLabel.Text);
-                    var response = _calculator.IsValid();
-                    if (!response.Success)
-                    {
-                        MessageLabel.Text = response.Error;
-                        return;
-                    }
-
-                    response = _calculator.Perform();
-                    if (!response.Success)
-                    {
-                        MessageLabel.Text = response.Error;
-                        return;
-                    }
-
-                    ResultLabel.Text = response.Result.ToString();
-                    MessageLabel.Text = string.Empty;
-                    _calculator.SetAction(CalculatorAction.None);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            MessageLabel.Text = "שגיאה כללית";
-        }
-    }
-
+        
     private Brush CreateGradientBrush(string label)
     {
         bool isOperator = "+-*/=C".Contains(label);
@@ -183,4 +188,5 @@ public class CalculatorCodeOnlyPage : ContentPage
             new Point(1, 1)
         );
     }
+
 }

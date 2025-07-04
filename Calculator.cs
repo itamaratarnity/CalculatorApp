@@ -110,5 +110,10 @@ public class Calculator
         CalculatorAction.Divide => "/",
         _ => "?"
     };
+
+    public void ClearHistory()
+    {
+        _history.Clear();
+    }
 }
 
