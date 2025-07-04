@@ -26,19 +26,26 @@ public class CalculatorResponse
 public class Calculator
 {
     private CalculatorAction _action = CalculatorAction.None;
-    private int _argument1 = 0;
-    private int _argument2 = 0;
+    private int _argument1 = -1;
+    private int _argument2 = -1;
     private bool _completed = false;
+
+    private readonly List<string> _history = new();
+
+    public IReadOnlyList<string> History => _history.AsReadOnly();
 
     public void SetArgument1(string value)
     {
         int.TryParse(value, out _argument1);
     }
+
     public void SetArgument2(string value)
     {
         int.TryParse(value, out _argument2);
     }
+
     public void SetAction(CalculatorAction action) => _action = action;
+
     public CalculatorResponse IsValid()
     {
         if (_action == CalculatorAction.None)
@@ -48,7 +55,7 @@ public class Calculator
         if (_argument2 == -1 && _action != CalculatorAction.Add && _action != CalculatorAction.Subtract)
             return new CalculatorResponse(string.Empty, false, "Second argument is not set.");
         _completed = true;
-        return new CalculatorResponse(string.Empty,true,string.Empty);
+        return new CalculatorResponse(string.Empty, true, string.Empty);
     }
 
     public bool IsCompleted() => _completed;
@@ -69,26 +76,39 @@ public class Calculator
             if (!response.Success)
                 return response;
 
-     
-            int temp = _action switch
+            int result = _action switch
             {
                 CalculatorAction.Add => _argument1 + _argument2,
                 CalculatorAction.Subtract => _argument1 - _argument2,
                 CalculatorAction.Multiply => _argument1 * _argument2,
-                CalculatorAction.Divide =>  _argument1 / _argument2,
+                CalculatorAction.Divide => _argument2 == 0
+                    ? throw new DivideByZeroException()
+                    : _argument1 / _argument2,
                 _ => _argument1
             };
-            response = new CalculatorResponse(temp.ToString(), true, string.Empty);
-            return response;
 
+            string historyItem = $"{_argument1} {_actionToSymbol(_action)} {_argument2} = {result}";
+            _history.Add(historyItem);
+
+            return new CalculatorResponse(result.ToString(), true, string.Empty);
         }
         catch (DivideByZeroException)
         {
             return new CalculatorResponse(string.Empty, false, "Division by zero is not allowed");
         }
-        catch(Exception)
+        catch (Exception)
         {
-            return new CalculatorResponse(string.Empty, false, "Unkwown error please check logs...");
+            return new CalculatorResponse(string.Empty, false, "Unknown error");
         }
     }
+
+    private string _actionToSymbol(CalculatorAction action) => action switch
+    {
+        CalculatorAction.Add => "+",
+        CalculatorAction.Subtract => "-",
+        CalculatorAction.Multiply => "*",
+        CalculatorAction.Divide => "/",
+        _ => "?"
+    };
 }
+

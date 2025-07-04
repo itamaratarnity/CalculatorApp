@@ -69,6 +69,7 @@ namespace CalculatorApp
                         }
 
                         ResultLabel.Text = response.Result.ToString();
+                        HistoryLabel.Text = string.Join(Environment.NewLine, _calculator.History.Reverse().Take(3));
                         MessageLabel.Text = string.Empty;
                         _calculator.SetAction(CalculatorAction.None);
                     }

@@ -56,7 +56,7 @@
                 Title of the page
             
                 Main grid to host the page [3 rows, no columns]
-                0. Title of the page (10%)
+                0. Calculator history (10%)
                 1. Calculator Result panel (20%)
                 2. Grid of buttons (60%)
                 2. Error message (10%)
@@ -70,16 +70,30 @@
                 </Grid.RowDefinitions>
             </Grid>
             <!-- 
-                Page title
+              Calculator History
             -->
-            <Label
+            <Border
                 Grid.Row="0"
-                Text="My Calculator"
-                FontFamily="BungeeSpice"
-                FontSize="30"
-                Margin="20,16"
-                HorizontalTextAlignment="Center"
-                VerticalTextAlignment="Center"/>
+                Stroke="LightGray"
+                StrokeThickness="1"
+                Background="#eee"
+                StrokeShape="RoundRectangle 16"
+                Margin="0,10">
+                <Label
+                        x:Name="HistoryLabel"
+                        Text=""
+                        FontFamily="Roboto"
+                        TextColor="Gray"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Start"
+                        VerticalTextAlignment="Center"
+                         LineBreakMode="WordWrap"
+                        MaxLines="3"
+                        FontSize="16"
+                        Padding="20, 10" />
+            </Border>
+
+
             <!-- 
                 Calculator Result 
             -->
